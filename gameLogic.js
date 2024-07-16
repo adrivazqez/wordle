@@ -1,31 +1,30 @@
-// Establecer focus inicial
 
-const guessedLetters  = document.querySelectorAll(".word-guessed_letter")
+const guessedLetters  = document.querySelectorAll(".first-try")
+let nodeOrder = 0
+const minimumNodeOrder = 0
 
 // Función proporcionada por la lección del proyecto por su complejidad. Comprueba si lo introducido es una letra.
+
 function isLetter(letter) {
     return /^[a-zA-Z]$/.test(letter);
   }
 
 // Funcionalidad que al pulsar una letra se haga focus en el siguiente elemento de la nodelist (rejilla de juego)
 
-let nodeOrder = 0
-
 guessedLetters.forEach (function (guessedLetter) {
     guessedLetter.addEventListener("keydown", function(event) {
 
         if(!isLetter(event.key)) {
-            event.preventDefault()
-        }
 
-        if(event.key === "Backspace") {
-            nodeOrder--
+            event.preventDefault()
+
+        } else if (isLetter(event.key)){
+
             guessedLetters[nodeOrder].focus()
-                guessedLetters[nodeOrder].value = ""
-        } else {
-            guessedLetters[nodeOrder].focus()
-        nodeOrder++
+            nodeOrder++
         }
+        
+        eraseLetter(event)
 
     })
 })
@@ -37,4 +36,24 @@ guessedLetters.forEach(function (guessedLetter) {
         event.target.value = event.target.value.toUpperCase()
     })
 })
+
+// Función de borrado de la tecla backspace
+
+function eraseLetter (event) {
+
+    if (event.key === "Backspace") {
+
+        if (nodeOrder >= minimumNodeOrder) {
+        nodeOrder--
+        guessedLetters[nodeOrder].focus()
+        guessedLetters[nodeOrder].value = ""
+
+    } else if (nodeOrder < minimumNodeOrder) {
+
+        nodeOrder = minimumNodeOrder
+    }
+
+    preventDefault("Backspace")
+    }
+}
 
