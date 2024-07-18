@@ -1,7 +1,8 @@
-
 const guessedLetters  = document.querySelectorAll(".first-try")
+const guessedWord = []
 let nodeOrder = 0
 const minimumNodeOrder = 0
+
 
 // Función proporcionada por la lección del proyecto por su complejidad. Comprueba si lo introducido es una letra.
 
@@ -22,10 +23,11 @@ guessedLetters.forEach (function (guessedLetter) {
 
             guessedLetters[nodeOrder].focus()
             nodeOrder++
+            
         }
         
         eraseLetter(event)
-
+        
     })
 })
 
@@ -34,6 +36,18 @@ guessedLetters.forEach (function (guessedLetter) {
 guessedLetters.forEach(function (guessedLetter) {
     guessedLetter.addEventListener("input", function (event) {
         event.target.value = event.target.value.toUpperCase()
+    })
+})
+
+// Funcionalidad para añadir la tecla pulsada como valor de guessedWord
+
+guessedLetters.forEach(function (guessedLetter) {
+    guessedLetter.addEventListener("input", function(event) {
+
+        if (isLetter(event.target.value)) {
+
+            guessedWord.push(event.target.value)
+        }
     })
 })
 
@@ -47,13 +61,14 @@ function eraseLetter (event) {
         nodeOrder--
         guessedLetters[nodeOrder].focus()
         guessedLetters[nodeOrder].value = ""
+        guessedWord.pop()
 
     } else if (nodeOrder < minimumNodeOrder) {
 
         nodeOrder = minimumNodeOrder
     }
 
-    preventDefault("Backspace")
+    //preventDefault("Backspace")
     }
 }
 
