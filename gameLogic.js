@@ -1,9 +1,13 @@
 const guessedLetters  = document.querySelectorAll(".first-try")
-const guessedWord = []
+
+const arrayGuessedWord = []
+const wordOfTheDay = ""
+
 let nodeOrder = 0
 const minimumNodeOrder = 0
+const maxNodeOrder = 5
 
-
+let wordOfTheDayJSON
 // Función proporcionada por la lección del proyecto por su complejidad. Comprueba si lo introducido es una letra.
 
 function isLetter(letter) {
@@ -22,6 +26,7 @@ guessedLetters.forEach (function (guessedLetter) {
         } else if (isLetter(event.key)){
 
             guessedLetters[nodeOrder].focus()
+
             nodeOrder++
             
         }
@@ -35,7 +40,9 @@ guessedLetters.forEach (function (guessedLetter) {
 
 guessedLetters.forEach(function (guessedLetter) {
     guessedLetter.addEventListener("input", function (event) {
+
         event.target.value = event.target.value.toUpperCase()
+
     })
 })
 
@@ -46,7 +53,7 @@ guessedLetters.forEach(function (guessedLetter) {
 
         if (isLetter(event.target.value)) {
 
-            guessedWord.push(event.target.value)
+            arrayGuessedWord.push(event.target.value)
         }
     })
 })
@@ -58,17 +65,52 @@ function eraseLetter (event) {
     if (event.key === "Backspace") {
 
         if (nodeOrder >= minimumNodeOrder) {
-        nodeOrder--
-        guessedLetters[nodeOrder].focus()
-        guessedLetters[nodeOrder].value = ""
-        guessedWord.pop()
+            nodeOrder--
+            guessedLetters[nodeOrder].focus()
+            guessedLetters[nodeOrder].value = ""
+            arrayGuessedWord.pop()
 
-    } else if (nodeOrder < minimumNodeOrder) {
+        } else if (nodeOrder <= minimumNodeOrder) {
 
-        nodeOrder = minimumNodeOrder
-    }
+            nodeOrder = minimumNodeOrder
+            guessedLetters[nodeOrder].focus()
+            
+        } else if (nodeOrder >= maxNodeOrder) {
 
-    //preventDefault("Backspace")
+            nodeOrder = maxNodeOrder
+            guessedLetters[nodeOrder].focus()
+        }
+
     }
 }
 
+// Funcionalidad de la tecla "Enter" o botón "Submit"
+
+const wordUrl = "https://words.dev-apis.com/word-of-the-day"
+
+const validWordUrl ="https://words.dev-apis.com/validate-word"
+
+const submitButton = document.getElementById("submit")
+
+
+async function checkGuessedWord () {
+
+}
+
+function createWord () {
+
+    guessedWord = arrayGuessedWord.join('')
+
+}
+
+async function startGame () {
+
+    const promise = await fetch(wordUrl)
+    
+    processedResponse = await promise.json()
+
+    wordOfTheDay = await processedResponse.word // Google cómo añadir a la variable "wordOfTheDay" la key "word" del JSON obtenido
+
+}
+
+startGame ()
