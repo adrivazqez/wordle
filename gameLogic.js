@@ -1,13 +1,14 @@
 const guessedLetters  = document.querySelectorAll(".first-try")
 
 const arrayGuessedWord = []
-const wordOfTheDay = ""
+let wordOfTheDay = ""
+let guessedWord = ""
 
 let nodeOrder = 0
 const minimumNodeOrder = 0
 const maxNodeOrder = 5
 
-let wordOfTheDayJSON
+
 // Función proporcionada por la lección del proyecto por su complejidad. Comprueba si lo introducido es una letra.
 
 function isLetter(letter) {
@@ -74,6 +75,7 @@ function eraseLetter (event) {
 
             nodeOrder = minimumNodeOrder
             guessedLetters[nodeOrder].focus()
+
             
         } else if (nodeOrder >= maxNodeOrder) {
 
@@ -92,25 +94,41 @@ const validWordUrl ="https://words.dev-apis.com/validate-word"
 
 const submitButton = document.getElementById("submit")
 
-
-async function checkGuessedWord () {
-
-}
-
+// Función para crear la palabra que intenta adivinar el usuario
 function createWord () {
 
     guessedWord = arrayGuessedWord.join('')
 
 }
+// Función para obtener la palabra del día de la API
 
 async function startGame () {
 
     const promise = await fetch(wordUrl)
     
-    processedResponse = await promise.json()
+    const processedResponse = await promise.json()
 
-    wordOfTheDay = await processedResponse.word // Google cómo añadir a la variable "wordOfTheDay" la key "word" del JSON obtenido
+    wordOfTheDay = await processedResponse.word
+
+    console.log(wordOfTheDay)
 
 }
 
 startGame ()
+
+// Función para comprobar que la palabra con la que hace submit el usuario es válida
+
+async function checkGuessedWord () {
+
+    await fetch(validWordUrl, {
+        method: "POST",
+        body: JSON.stringify({
+            "word": guessedWord
+        }),
+        headers:{
+            "Content-type": "application/json; charset=UTF-8"
+        }
+    })
+}
+
+submitButton.addEventListener("click", checkGuessedWord ())
