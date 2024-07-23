@@ -3,6 +3,7 @@ const guessedLetters  = document.querySelectorAll(".first-try")
 const arrayGuessedWord = []
 let wordOfTheDay = ""
 let guessedWord = ""
+let validTries = 0
 
 let nodeOrder = 0
 const minimumNodeOrder = 0
@@ -18,6 +19,7 @@ function isLetter(letter) {
 // Funcionalidad que al pulsar una letra se haga focus en el siguiente elemento de la nodelist (rejilla de juego)
 
 guessedLetters.forEach (function (guessedLetter) {
+
     guessedLetter.addEventListener("keydown", function(event) {
 
         if(!isLetter(event.key)) {
@@ -40,6 +42,7 @@ guessedLetters.forEach (function (guessedLetter) {
 // Funcionalidad para poner las letras introducidas en mayúsculas sin que el usuario tenga que pulsar "caps"
 
 guessedLetters.forEach(function (guessedLetter) {
+
     guessedLetter.addEventListener("input", function (event) {
 
         event.target.value = event.target.value.toUpperCase()
@@ -50,6 +53,7 @@ guessedLetters.forEach(function (guessedLetter) {
 // Funcionalidad para añadir la tecla pulsada como valor de guessedWord
 
 guessedLetters.forEach(function (guessedLetter) {
+
     guessedLetter.addEventListener("input", function(event) {
 
         if (isLetter(event.target.value)) {
@@ -65,7 +69,7 @@ function eraseLetter (event) {
 
     if (event.key === "Backspace") {
 
-        if (nodeOrder >= minimumNodeOrder) {
+        if (nodeOrder > minimumNodeOrder) {
             nodeOrder--
             guessedLetters[nodeOrder].focus()
             guessedLetters[nodeOrder].value = ""
@@ -75,9 +79,10 @@ function eraseLetter (event) {
 
             nodeOrder = minimumNodeOrder
             guessedLetters[nodeOrder].focus()
+            guessedLetters[nodeOrder].value = ""
 
             
-        } else if (nodeOrder >= maxNodeOrder) {
+        } else if (nodeOrder > maxNodeOrder) {
 
             nodeOrder = maxNodeOrder
             guessedLetters[nodeOrder].focus()
@@ -97,7 +102,7 @@ const submitButton = document.getElementById("submit")
 // Función para crear la palabra que intenta adivinar el usuario
 function createWord () {
 
-    guessedWord = arrayGuessedWord.join('')
+    guessedWord = arrayGuessedWord.join("")
 
 }
 // Función para obtener la palabra del día de la API
@@ -118,9 +123,14 @@ startGame ()
 
 // Función para comprobar que la palabra con la que hace submit el usuario es válida
 
+
+
 async function checkGuessedWord () {
 
+    createWord()
+
     await fetch(validWordUrl, {
+
         method: "POST",
         body: JSON.stringify({
             "word": guessedWord
@@ -128,7 +138,23 @@ async function checkGuessedWord () {
         headers:{
             "Content-type": "application/json; charset=UTF-8"
         }
+
     })
+
+    .then((response) => response.json()) 
+    .then((data) => {
+        
+        if (data.validWord === true){
+
+            console.log("funciono")
+
+        } else if (data.validWord === false) {
+
+            console.log("no funciono")
+
+        }
+    })
+
 }
 
-submitButton.addEventListener("click", checkGuessedWord ())
+submitButton.addEventListener("click", checkGuessedWord)
